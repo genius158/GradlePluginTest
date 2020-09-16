@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GradlePluginTest.iml" filepath="$PROJECT_DIR$/.idea/modules/GradlePluginTest.iml" group="GradlePluginTest" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="GradlePluginTest/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/asmlocal/asmlocal.iml" filepath="$PROJECT_DIR$/.idea/modules/asmlocal/asmlocal.iml" group="GradlePluginTest/asmlocal" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/asmlocalcode/asmlocalcode.iml" filepath="$PROJECT_DIR$/.idea/modules/asmlocalcode/asmlocalcode.iml" group="GradlePluginTest/asmlocalcode" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/testPlugin/testPlugin.iml" filepath="$PROJECT_DIR$/.idea/modules/testPlugin/testPlugin.iml" group="GradlePluginTest/testPlugin" />
+    </modules>
+  </component>
+</project>

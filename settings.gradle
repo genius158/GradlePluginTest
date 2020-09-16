@@ -1,0 +1,4 @@
+include ':testPlugin'
+include ':asmlocalcode'
+include ':asmlocal'
+include ':app'

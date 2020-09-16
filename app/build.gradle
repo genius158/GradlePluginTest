@@ -1,0 +1,235 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+//apply plugin: "asmlocal"
+apply plugin: 'testPlugin'
+//apply plugin: 'asmlocal'
+
+android {
+  compileSdkVersion 29
+  defaultConfig {
+    applicationId "com.yan.gradle.test"
+    minSdkVersion 15
+    targetSdkVersion 29
+    versionCode 1
+    versionName "1.0"
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    vectorDrawables.useSupportLibrary = true
+  }
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+      println("release release release        ")
+    }
+    debug {
+      println("debug debug debug        ")
+    }
+  }
+  lintOptions {
+    abortOnError false
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+
+  flavorDimensions "api", "mode"
+  productFlavors {
+    demo {
+      dimension "mode"
+    }
+    full {
+      dimension "mode"
+    }
+
+    minApi24 {
+      dimension "api"
+    }
+  }
+  variantFilter { variant ->
+    def names = variant.flavors*.name
+    // To check for a build type instead, use variant.buildType.name == "buildType"
+    if (names.contains("full")) {
+      // Gradle ignores any variants that satisfy the conditions above.
+      setIgnore(true)
+    }
+  }
+}
+configurations {
+  // For variants that combine a product flavor and build type, you need to
+  // intitialize a placeholder for its dependency configuration.
+  freeDebugRuntimeOnly {}
+}
+dependencies {
+  println("dependencies  dependencies dependencies dependencies ")
+  compile fileTree(include: ['*.jar'], dir: 'libs')
+  androidTestCompile('androidx.test.espresso:espresso-core:3.1.0', {
+    exclude group: 'com.android.support', module: 'support-annotations'
+  })
+
+  println("variant    dependencies dependencies dependencies")
+  project.android.applicationVariants.all {
+    variant ->
+      println("variant" + variant)
+  }
+
+  testCompile 'junit:junit:4.12'
+  implementation 'androidx.appcompat:appcompat:1.0.0'
+  implementation 'androidx.recyclerview:recyclerview:1.1.0'
+  implementation 'androidx.cardview:cardview:1.0.0'
+  implementation 'androidx.cardview:cardview:1.0.0'
+  implementation 'com.google.android.material:material:1.0.0'
+  implementation 'com.wang.avi:library:2.1.3'
+  implementation 'androidx.vectordrawable:vectordrawable:1.0.0'
+  implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+  implementation 'me.imid.swipebacklayout.lib:library:1.1.0'
+  implementation project(':asmlocalcode')
+  implementation "androidx.viewpager2:viewpager2:1.0.0"
+  implementation "androidx.core:core-ktx:+"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+  //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+  //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+  //    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+}
+repositories {
+  mavenCentral()
+}
+
+def tes = { int a ->
+  println("aaaaaa    $a")
+}
+
+project.android.applicationVariants.all {
+  //判断是release还是debug版本
+  println("buildType  ${it.name}  \n  " +
+      "${it.dirName}   \n " +
+      "${it.getProductFlavors()} \n  " +
+      "${it.outputs}   \n  " +
+      "${project.rootDir}   \n  "
+  )
+
+  it.outputs.all {
+    println("outputs $it ")
+  }
+
+  //  it.setOutputFile(project.rootDir)
+}
+
+//task(fad).doLast(assemble)
+
+project.afterEvaluate {
+  println "app evaluate start"
+  println "app evaluate end"
+}
+
+project.android.applicationVariants.all { variant ->
+
+  String variantName = variant.name.capitalize()
+  def variantFlavorName = variant.flavorName
+
+  println("applicationVariants \n" +
+      "  ${project.tasks}\n" +
+      "  ${variant.buildType}\n" +
+      "  ${variant.productFlavors}\n" +
+      //      "  ${variant.manifestPlaceholders}\n" +
+      //      "  ${variant.buildConfigFields}\n" +
+      //      "  ${variant.pakageName}\n" +
+      //      "  ${variant.artifacts}\n" +
+      "  ${variant.outputs}\n" +
+      //      "  ${variant.inputs}\n" +
+      //      "  ${variant.dependenciesInfo}\n" +
+      "  ${variant.applicationId}\n" +
+      //      "  ${variant.aaptOptions}\n" +
+      "")
+
+  Task preBuild = project.tasks["pre${variantName}Build"]
+  if (variantFlavorName == null || "" == variantFlavorName) {
+    return
+  }
+  preBuild.doFirst {
+    //在这里替换资源文件
+    println "${variantFlavorName} resource is changed!"
+  }
+}
+println "project $project"
+println "rootProject ${project.rootProject}"
+println "rootProject ${project.rootProject.rootProject}"
+
+project.tasks.whenTaskAdded { task ->
+  println "whenTaskAdded $task     ${task.inputs.files}  "
+}
+
+
+
+//project.getProperties().get("android"))
+
+def variant = project.properties["android"]
+
+// variants.all(variant -> {
+//          BaseVariantImpl bv = (BaseVariantImpl) variant;
+//          TaskProvider<MergeResources> merge = bv.getMergeResourcesProvider();
+//          Task picTask = project.task("Compass" + ((BaseVariantImpl) variant).getName());
+//
+//          picTask.doLast(new Action<Task>() {
+//            @Override public void execute(Task task) {
+//
+//            }
+//          });
+//          Set<File> files = bv.getAllRawAndroidResources().getFiles();
+//
+//          ArrayList<File> tempFiles = new ArrayList<>();
+//
+//          for (File file : files) {
+//            collectionImg(file, tempFiles);
+//          }
+//        });
+//getApplicationVariants
+//project.properties["android"].applicationVariants.all {variants->
+// def files= variants.allRawAndroidResources.files
+//
+//  files.each{f->
+//    filter(f)
+//  }
+//}
+//
+//def filter(File file){
+//  if (file.isDirectory()){
+//    file.listFiles().each {f->
+//      filter(f)
+//    }
+//  }else{
+//    println("androidandroidandroidandroid     ${file.absolutePath}")
+//
+//  }
+//}
+
+project.afterEvaluate {
+  manifestAdjust()
+}
+
+void manifestAdjust() {
+  android.applicationVariants.each { variant ->
+    def name = variant.name
+    println "name = ${name}"
+    variant.outputs.each { output ->
+      println("variant.outputs.each")
+      output.processManifestProvider.get().doLast {
+
+        def manifest = output.processManifestProvider.get().manifestOutputDirectory.get().file(
+            "AndroidManifest.xml").asFile
+
+        ant.replace(
+            file: manifest,
+            token: 'WRITE_EXTERNAL_STORAGE',
+            value: 'test test test'
+        ) {
+        }
+
+        println(
+            "processManifest doLast    ${manifest.absolutePath}")
+      }
+    }
+  }
+}

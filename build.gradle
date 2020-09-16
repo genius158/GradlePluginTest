@@ -1,0 +1,72 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+
+
+buildscript {
+  ext.kotlin_version = '1.4.0'
+
+  repositories {
+    google()
+    jcenter()
+    mavenCentral()
+
+    println("rootProject   ${rootProject.projectDir}")
+    maven {
+      url uri('asmlocal/plugins')
+    }
+    maven {
+      url uri('testPlugin/plugins')
+    }
+  }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:4.0.1'
+
+    classpath 'com.novoda:bintray-release:0.9.1'
+    classpath 'com.yan.asmlocal:asmlocal:0.0.1'
+    classpath 'com.yan.testpluin:testPlugin:0.0.1'
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    // NOTE: Do not place your application dependencies here; they belong
+    // in the individual module build.gradle files
+  }
+}
+
+allprojects {
+  repositories {
+    google()
+    jcenter()
+    mavenCentral()
+  }
+  tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+  }
+  gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+      options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+  }
+}
+
+task clean(type: Delete) {
+  delete rootProject.buildDir
+}
+
+
+task printPerson(){
+  //定义时
+  doLast {
+    println "this is doLast1"
+  }
+}
+
+//后来加
+printPerson.doFirst {
+  println "this is doFirst1"
+}
+printPerson.doFirst {
+  println "this is doFirst2"
+}
+printPerson.doLast {
+  println "this is doLast2"
+}
+
