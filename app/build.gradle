@@ -120,13 +120,13 @@ project.android.applicationVariants.all {
 //task(fad).doLast(assemble)
 
 project.afterEvaluate {
-  def cur=System.currentTimeMillis()
+  def cur = System.currentTimeMillis()
   clean.doFirst {
-    cur=System.currentTimeMillis()
+    cur = System.currentTimeMillis()
     println "doFirstdoFirstdoFirstdoFirstdoFirstdoFirstdoFirstdoFirstdoFirst"
   }
   clean.doLast {
-    println "doLastdoLastdoLastdoLastdoLastdoLastdoLastdoLastdoLastdoLastdoLast   ${System.currentTimeMillis()- cur}"
+    println "doLastdoLastdoLastdoLastdoLastdoLastdoLastdoLastdoLastdoLastdoLast   ${System.currentTimeMillis() - cur}"
   }
 }
 
@@ -236,7 +236,23 @@ def manifestAdjust = {
   }
 }
 
+task testetsetset {
+  doFirst {
+    println "shouldRunAfterTaskshouldRunAfterTaskshouldRunAfterTaskshouldRunAfterTaskshouldRunAfterTask"
+  }
+}
+
 project.afterEvaluate {
   manifestAdjust()
+
+  def task = project.tasks.getByName("assembleDebug")
+
+  println "afterEvaluate ------------------------ $task"
+
+  task.dependsOn(testetsetset)
+
+  task.doFirst {
+    println "doFirst ---------doFirst------doFirst----doFirst----- $task"
+  }
 }
 

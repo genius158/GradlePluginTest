@@ -1,7 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-
-
 buildscript {
   ext.kotlin_version = '1.4.0'
 
@@ -51,8 +49,7 @@ task clean(type: Delete) {
   delete rootProject.buildDir
 }
 
-
-task printPerson(){
+task printPerson() {
   //定义时
   println "this is printPerson printPerson printPerson"
 
@@ -60,7 +57,9 @@ task printPerson(){
     println "this is printPerson"
   }
 }
-printPerson.dependsOn("app:assemble")
+
+
+//printPerson.dependsOn("app:assemble")
 //后来加
 printPerson.doFirst {
   println "this is doFirst1"
@@ -70,5 +69,43 @@ printPerson.doFirst {
 }
 printPerson.doLast {
   println "this is doLast2"
+}
+
+task test1() {
+  doFirst {
+    println "test1 test1 test1 test1 test1"
+  }
+}
+
+task test2() {
+  doFirst {
+    println "test2 test2 test2 test2 test2"
+  }
+}
+test2.shouldRunAfter(test1)
+
+//project.task("app:assemble").dependsOn(printPerson)
+//Graph
+
+def lastTask
+
+project.gradle.taskGraph.whenReady { graph ->
+  graph.allTasks.each { task ->
+    println "afterEvaluate $task    ${task.name}"
+
+
+    if (task.name == "assembleDebug") {
+      println "afterEvaluate ------------------------ $task"
+
+      lastTask.doFirst {
+        println "lastName ---------lastName------lastName----lastName----- $task"
+      }
+
+      task.doFirst {
+        println "doFirst ---------doFirst------doFirst----doFirst----- $task"
+      }
+    }
+    lastTask=task
+  }
 }
 

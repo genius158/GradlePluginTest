@@ -99,4 +99,5 @@ public class TestPlugin implements Plugin<Project> {
       KernelLog.info("BaseVariantImpl    " + "   " + file.getAbsolutePath());
     }
   }
+
 }
