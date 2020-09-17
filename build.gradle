@@ -54,11 +54,13 @@ task clean(type: Delete) {
 
 task printPerson(){
   //定义时
+  println "this is printPerson printPerson printPerson"
+
   doLast {
-    println "this is doLast1"
+    println "this is printPerson"
   }
 }
-
+printPerson.dependsOn("app:assemble")
 //后来加
 printPerson.doFirst {
   println "this is doFirst1"

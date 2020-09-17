@@ -120,8 +120,14 @@ project.android.applicationVariants.all {
 //task(fad).doLast(assemble)
 
 project.afterEvaluate {
-  println "app evaluate start"
-  println "app evaluate end"
+  def cur=System.currentTimeMillis()
+  clean.doFirst {
+    cur=System.currentTimeMillis()
+    println "doFirstdoFirstdoFirstdoFirstdoFirstdoFirstdoFirstdoFirstdoFirst"
+  }
+  clean.doLast {
+    println "doLastdoLastdoLastdoLastdoLastdoLastdoLastdoLastdoLastdoLastdoLast   ${System.currentTimeMillis()- cur}"
+  }
 }
 
 project.android.applicationVariants.all { variant ->
@@ -205,15 +211,11 @@ def variant = project.properties["android"]
 //  }
 //}
 
-project.afterEvaluate {
-  manifestAdjust()
-}
-
-void manifestAdjust() {
-  android.applicationVariants.each { variant ->
-    def name = variant.name
+def manifestAdjust = {
+  android.applicationVariants.each { tmpVariant ->
+    def name = tmpVariant.name
     println "name = ${name}"
-    variant.outputs.each { output ->
+    tmpVariant.outputs.each { output ->
       println("variant.outputs.each")
       output.processManifestProvider.get().doLast {
 
@@ -233,3 +235,8 @@ void manifestAdjust() {
     }
   }
 }
+
+project.afterEvaluate {
+  manifestAdjust()
+}
+

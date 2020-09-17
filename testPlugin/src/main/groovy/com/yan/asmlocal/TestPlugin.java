@@ -40,6 +40,18 @@ public class TestPlugin implements Plugin<Project> {
         List<Task> tasks = taskExecutionGraph.getAllTasks();
         boolean isDebug = false;
         for (Task task : tasks) {
+          if (task.getName().contains("assemble")) {
+            task.doFirst(new Action<Task>() {
+              @Override public void execute(Task task) {
+
+              }
+            });
+            task.doLast(new Action<Task>() {
+              @Override public void execute(Task task) {
+
+              }
+            });
+          }
           KernelLog.info(" taskExecutionGraph   " + task);
 
           String name = task.getName();
