@@ -241,29 +241,34 @@ task testetsetset {
     println "shouldRunAfterTaskshouldRunAfterTaskshouldRunAfterTaskshouldRunAfterTaskshouldRunAfterTask"
 
     def path = ant.path {
-      fileset(dir: '.', includes: '*')
+      fileset(dir: '.'
+
+          //  includes: '*' 当前位置下，includes: '**'目录下所有
+          , includes: '**')
     }
     path.list().each {
       println it
     }
 
     ant.zip(destfile: 'archive.zip') {
-      //      fileset(dir: 'src', includes: 'main')
-      fileset(dir: '.') {
-        // include(name: '**.xml')
-        // exclude(name: '**.java')
-        include(name: "*.txt")
+//      fileset(dir: '.') {
+//        include(name: "*.txt")
+//      }
+        fileset(dir: 'src/main') {
+          exclude(name: '**.xml')
+          include(name: '**.java')
       }
 
-      fileset(dir: 'src/main/java')
+//      fileset(dir: 'src/main/java')
     }
 
+    delete("temp")
     ant.unzip(src: "archive.zip", dest: "temp")
     copy {
       from "temp/test.txt"
       into "."
     }
-    delete("temp")
+//    delete("temp")
   }
 }
 
