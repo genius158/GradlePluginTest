@@ -11,7 +11,7 @@ public final class AsmLocalClassAdapter extends ClassVisitor {
   private AsmLocalExtension asmLocalExtension;
 
   AsmLocalClassAdapter(final ClassVisitor cv, AsmLocalExtension asmLocalExtension) {
-    super(Opcodes.ASM5, cv);
+    super(Opcodes.ASM6, cv);
     this.asmLocalExtension = asmLocalExtension;
   }
 
@@ -26,6 +26,7 @@ public final class AsmLocalClassAdapter extends ClassVisitor {
       this.superClassName = superName.replace("/", ".");
     }
   }
+
 
   @Override
   public MethodVisitor visitMethod(final int access, final String name,
@@ -53,7 +54,7 @@ public final class AsmLocalClassAdapter extends ClassVisitor {
     ) {
 
       return mv == null ? null
-          //: new AddTryCatchAdviceAdapter(Opcodes.ASM5, mv, access, name, desc);
+          //: new AddTryCatchAdviceAdapter(Opcodes.ASM6, mv, access, name, desc);
           : new AddTryCatchMethodAdapter(className, superClassName, name, access, desc, mv,
               asmLocalExtension);
     } else {
