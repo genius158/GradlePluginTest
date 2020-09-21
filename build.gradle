@@ -90,6 +90,11 @@ test2.shouldRunAfter(test1)
 def lastTask
 
 project.gradle.taskGraph.whenReady { graph ->
+  tasks.withType(DefaultTask){
+    println "withType  DefaultTask   ------------------------ $it"
+
+  }
+
   graph.allTasks.each { task ->
     println "afterEvaluate $task    ${task.name}"
 

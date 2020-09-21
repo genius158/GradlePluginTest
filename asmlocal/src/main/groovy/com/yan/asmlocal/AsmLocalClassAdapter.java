@@ -19,8 +19,12 @@ public final class AsmLocalClassAdapter extends ClassVisitor {
   public void visit(int version, int access, String name, String signature, String superName,
       String[] interfaces) {
     super.visit(version, access, name, signature, superName, interfaces);
-    this.className = name.replace("/", ".");
-    this.superClassName = superName.replace("/", ".");
+    if (name != null) {
+      this.className = name.replace("/", ".");
+    }
+    if (superName != null) {
+      this.superClassName = superName.replace("/", ".");
+    }
   }
 
   @Override
@@ -37,7 +41,8 @@ public final class AsmLocalClassAdapter extends ClassVisitor {
     //    + signature
     //    + "   true true true ");
 
-    if (ClickDoubleWrapAdapter.intercept(className,superClassName,access,name,desc,signature,exceptions)){
+    if (ClickDoubleWrapAdapter.intercept(className, superClassName, access, name, desc, signature,
+        exceptions)) {
       return mv == null ? null
           : new ClickDoubleWrapAdapter(className, superClassName, name, access, desc, mv,
               asmLocalExtension);
