@@ -1,3 +1,4 @@
+include ':asmprivacy'
 include ':testPlugin'
 include ':asmlocalcode'
 include ':asmlocal'

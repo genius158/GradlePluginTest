@@ -15,6 +15,9 @@ buildscript {
     maven {
       url uri('testPlugin/plugins')
     }
+    maven {
+      url uri('asmprivacy/plugins')
+    }
   }
   dependencies {
     classpath 'com.android.tools.build:gradle:4.0.1'
@@ -22,6 +25,7 @@ buildscript {
     classpath 'com.novoda:bintray-release:0.9.1'
     classpath 'com.yan.asmlocal:asmlocal:0.0.1'
     classpath 'com.yan.testpluin:testPlugin:0.0.1'
+    classpath 'com.yan.testpluin:asmprivacy:0.0.1'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     // NOTE: Do not place your application dependencies here; they belong
     // in the individual module build.gradle files

@@ -1,0 +1,1 @@
+package com.yan.asmlocal;/** * @author Bevan (Contact me: https://github.com/genius158) * @since 2020/9/16 */public class Config {}

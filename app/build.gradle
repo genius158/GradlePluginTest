@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'testPlugin'
 apply plugin: 'asmlocal'
+apply plugin: 'privacy'
 
 android {
   compileSdkVersion 29
@@ -221,12 +222,12 @@ def manifestAdjust = {
         def manifest = output.processManifestProvider.get().manifestOutputDirectory.get().file(
             "AndroidManifest.xml").asFile
 
-        ant.replace(
-            file: manifest,
-            token: 'WRITE_EXTERNAL_STORAGE',
-            value: 'test test test'
-        ) {
-        }
+//        ant.replace(
+//            file: manifest,
+//            token: 'WRITE_EXTERNAL_STORAGE',
+//            value: 'test test test'
+//        ) {
+//        }
 
         println(
             "processManifest doLast    ${manifest.absolutePath}")

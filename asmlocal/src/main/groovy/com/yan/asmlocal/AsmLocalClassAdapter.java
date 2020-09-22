@@ -1,7 +1,9 @@
 package com.yan.asmlocal;
 
+import java.util.Arrays;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.ModuleVisitor;
 import org.objectweb.asm.Opcodes;
 
 public final class AsmLocalClassAdapter extends ClassVisitor {
@@ -19,6 +21,18 @@ public final class AsmLocalClassAdapter extends ClassVisitor {
   public void visit(int version, int access, String name, String signature, String superName,
       String[] interfaces) {
     super.visit(version, access, name, signature, superName, interfaces);
+
+    KernelLog.info("visit "
+        + access
+        + "  "
+        + name
+        + "  "
+        + signature
+        + "  "
+        + superName
+        + "  "
+        + Arrays.toString(interfaces)
+        + "   true true true ");
     if (name != null) {
       this.className = name.replace("/", ".");
     }
@@ -60,5 +74,9 @@ public final class AsmLocalClassAdapter extends ClassVisitor {
     } else {
       return mv;
     }
+  }
+
+  @Override public ModuleVisitor visitModule(String name, int access, String version) {
+    return super.visitModule(name, access, version);
   }
 }
