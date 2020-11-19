@@ -1,8 +1,9 @@
+import com.android.build.gradle.internal.api.BaseVariantImpl
+
+println("configurations apply apply")
+
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'testPlugin'
-apply plugin: 'asmlocal'
-apply plugin: 'privacy'
+
 
 android {
   compileSdkVersion 29
@@ -35,19 +36,6 @@ android {
     targetCompatibility JavaVersion.VERSION_1_8
   }
 
-  flavorDimensions "api", "mode"
-  productFlavors {
-    demo {
-      dimension "mode"
-    }
-    full {
-      dimension "mode"
-    }
-
-    minApi24 {
-      dimension "api"
-    }
-  }
   variantFilter { variant ->
     def names = variant.flavors*.name
     // To check for a build type instead, use variant.buildType.name == "buildType"
@@ -92,6 +80,7 @@ dependencies {
   //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
   //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
   //    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
 }
 repositories {
   mavenCentral()
@@ -164,7 +153,7 @@ println "rootProject ${project.rootProject}"
 println "rootProject ${project.rootProject.rootProject}"
 
 project.tasks.whenTaskAdded { task ->
-  println "whenTaskAdded $task     ${task.inputs.files}  "
+//  println "whenTaskAdded $task     ${task.inputs.files}  "
 }
 
 
@@ -213,6 +202,23 @@ def variant = project.properties["android"]
 
 def manifestAdjust = {
   android.applicationVariants.each { tmpVariant ->
+
+//    task testDependsOn() {
+//      println("getDependsOn getDependsOn getDependsOn getDependsOn")
+//    }
+
+//    ((BaseVariantImpl)tmpVariant).getAssemble().dependsOn({
+//      println("getDependsOn getDependsOn getDependsOn getDependsOn")
+//
+//      apply plugin: 'kotlin-android-extensions'
+//    })
+
+    def javaSoure=file(project.rootProject.projectDir.absolutePath+"/testjava")
+    ((BaseVariantImpl)tmpVariant).addJavaSourceFoldersToModel(javaSoure)
+
+
+//    ((BaseVariantImpl)tmpVariant).addOutputs()
+
     def name = tmpVariant.name
     println "name = ${name}"
     tmpVariant.outputs.each { output ->
@@ -272,15 +278,15 @@ task testetsetset {
   }
 }
 
+println "afterEvaluate ------------------------      111111111"
+
 project.afterEvaluate {
   manifestAdjust()
 
   def task = project.tasks.getByName("assembleDebug")
-
-  println "afterEvaluate ------------------------ $task"
+  println "afterEvaluate ------------------------ $task      2222222222"
 
   task.dependsOn(testetsetset)
-
   task.doFirst {
     println "doFirst ---------doFirst------doFirst----doFirst----- $task"
   }

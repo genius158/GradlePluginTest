@@ -1,0 +1,2 @@
+apply plugin: 'kotlin-android'
+println("plugin plugin plugin plugin plugin plugin")

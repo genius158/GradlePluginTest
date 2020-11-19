@@ -1,90 +1,102 @@
+import com.android.build.gradle.internal.api.BaseVariantImpl
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.kotlin_version = '1.4.0'
+    ext.kotlin_version = '1.4.0'
 
-  repositories {
-    google()
-    jcenter()
-    mavenCentral()
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
 
-    println("rootProject   ${rootProject.projectDir}")
-    maven {
-      url uri('asmlocal/plugins')
+        println("rootProject   ${rootProject.projectDir}")
+        maven {
+            url uri('asmlocal/plugins')
+        }
+        maven {
+            url uri('testPlugin/plugins')
+        }
+        maven {
+            url uri('asmprivacy/plugins')
+        }
     }
-    maven {
-      url uri('testPlugin/plugins')
-    }
-    maven {
-      url uri('asmprivacy/plugins')
-    }
-  }
-  dependencies {
-    classpath 'com.android.tools.build:gradle:4.0.1'
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.0.1'
 
-    classpath 'com.novoda:bintray-release:0.9.1'
-    classpath 'com.yan.asmlocal:asmlocal:0.0.1'
-    classpath 'com.yan.testpluin:testPlugin:0.0.1'
-    classpath 'com.yan.testpluin:asmprivacy:0.0.1'
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    // NOTE: Do not place your application dependencies here; they belong
-    // in the individual module build.gradle files
-  }
+        classpath 'com.novoda:bintray-release:0.9.1'
+        classpath 'com.yan.asmlocal:asmlocal:0.0.1'
+        classpath 'com.yan.testpluin:asmprivacy:0.0.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+afterEvaluate {
+//    def d=project.buildscript.configurations.getByName("classpath").dependencies.getAt(0)
+//    project.buildscript.configurations.getByName("classpath").dependencies.remove(d)
+
+    //dependencyConstraintHandler
+    project.dependencies.any { t ->
+//        println("project.dependencies   ${     project.dependencies.add("classpath",'com.yan.testpluin:testPlugin:0.0.1')}")
+    }
+    println("project.dependencies   ${project.dependencies.getMetaPropertyValues()}")
+
 }
 
 allprojects {
-  repositories {
-    google()
-    jcenter()
-    mavenCentral()
-  }
-  tasks.withType(Javadoc) {
-    options.addStringOption('Xdoclint:none', '-quiet')
-    options.addStringOption('encoding', 'UTF-8')
-  }
-  gradle.projectsEvaluated {
-    tasks.withType(JavaCompile) {
-      options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
     }
-  }
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+    }
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    }
 }
 
 task clean(type: Delete) {
-  delete rootProject.buildDir
+    delete rootProject.buildDir
 }
 
 task printPerson() {
-  //定义时
-  println "this is printPerson printPerson printPerson"
+    //定义时
+    println "this is printPerson printPerson printPerson"
 
-  doLast {
-    println "this is printPerson"
-  }
+    doLast {
+        println "this is printPerson"
+    }
 }
 
 
 //printPerson.dependsOn("app:assemble")
 //后来加
 printPerson.doFirst {
-  println "this is doFirst1"
+    println "this is doFirst1"
 }
 printPerson.doFirst {
-  println "this is doFirst2"
+    println "this is doFirst2"
 }
 printPerson.doLast {
-  println "this is doLast2"
+    println "this is doLast2"
 }
 
 task test1() {
-  doFirst {
-    println "test1 test1 test1 test1 test1"
-  }
+    doFirst {
+        println "test1 test1 test1 test1 test1"
+    }
 }
 
 task test2() {
-  doFirst {
-    println "test2 test2 test2 test2 test2"
-  }
+    doFirst {
+        println "test2 test2 test2 test2 test2"
+    }
 }
 test2.shouldRunAfter(test1)
 
@@ -94,27 +106,158 @@ test2.shouldRunAfter(test1)
 def lastTask
 
 project.gradle.taskGraph.whenReady { graph ->
-  tasks.withType(DefaultTask){
-    println "withType  DefaultTask   ------------------------ $it"
+    tasks.withType(DefaultTask) {
+        println "withType  DefaultTask   ------------------------ $it"
 
-  }
-
-  graph.allTasks.each { task ->
-    println "afterEvaluate $task    ${task.name}"
-
-
-    if (task.name == "assembleDebug") {
-      println "afterEvaluate ------------------------ $task"
-
-      lastTask.doFirst {
-        println "lastName ---------lastName------lastName----lastName----- $task"
-      }
-
-      task.doFirst {
-        println "doFirst ---------doFirst------doFirst----doFirst----- $task"
-      }
     }
-    lastTask=task
-  }
+
+    graph.allTasks.each { task ->
+        println "afterEvaluate $task    ${task.name}"
+
+
+        if (task.name == "assembleDebug") {
+            println "afterEvaluate ------------------------ $task"
+
+            lastTask.doFirst {
+                println "lastName ---------lastName------lastName----lastName----- $task"
+            }
+
+            task.doFirst {
+                println "doFirst ---------doFirst------doFirst----doFirst----- $task"
+            }
+        }
+        lastTask = task
+    }
 }
 
+
+getSubprojects().each { p ->
+    if (p.name.contains("app"))
+        p.apply plugin: 'com.android.application'
+
+    p.afterEvaluate {
+        try {
+            p.android.applicationVariants.all { variant ->
+                ((BaseVariantImpl) variant).getAssemble().dependsOn({
+                    println("getDependsOn getDependsOn getDependsOn getDependsOn")
+
+
+                })
+            }
+        } catch (Throwable e) {
+            e.printStackTrace()
+        }
+    }
+
+    println("KotlinCompile KotlinCompile 111111111111111111")
+
+    p.getTasks().withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).whenTaskAdded { task ->
+
+        println("KotlinCompile KotlinCompile KotlinCompile KotlinCompile")
+//        p.pluginManager.apply("kotlin-android")
+        p.getExtensions().android.kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+
+    p.getTasks().withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        println("KotlinCompile KotlinCompile KotlinCompile KotlinCompile")
+        p.pluginManager.apply("kotlin-android")
+        p.getExtensions().android.kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = JavaVersion.VERSION_1_7
+        targetCompatibility = JavaVersion.VERSION_1_7
+    }
+
+    ////        ant.replace(
+    ////            file: manifest,
+    ////            token: 'WRITE_EXTERNAL_STORAGE',
+    ////            value: 'test test test'
+    ////        ) {
+    ////        }
+    println("sesesesesese configure  $p    ")
+//    ant.replace(
+//            file: p.buildFile,
+//            token: "apply plugin: 'kotlin-android'",
+//            value: 'test test test'
+//    ) {
+//    }
+    p.configurations { tmp ->
+        println("sesesesesese configure  $p    ${p.buildscript.dependencies}")
+        p.buildscript.dependencies.any { d ->
+            println("sdfsafsfasfsfafafasff $p    ${d}")
+            p.extensions
+        }
+
+
+    }
+    p.gradle.afterProject {
+        println("sesesesesese configure  $p    ${p.buildscript.dependencies}")
+        p.buildscript.dependencies.any { d ->
+            println("sdfsafsfasfsfafafasff $p    ${d}")
+
+        }
+
+    }
+    p.beforeEvaluate {
+        try {
+            p.android.applicationVariants.all { variant ->
+                //androidx.cardview:cardview:1.0.0
+                variant.getCompileConfiguration().exclude group: 'androidx.cardview', module: 'cardview'
+            }
+        } catch (Throwable e) {
+        }
+
+
+//        p.configurations.getByName("implementation").dependencies.any {d->
+//            println("configurations   "+"${d.group}:${d.name}:${d.version}")
+//            p.configurations.getByName("implementation").dependencies.remove(d)
+//        }
+        def isAndroidModule = p.getProperties().get("android") != null
+        println("isAndroidModule isAndroidModule   $isAndroidModule")
+        if (isAndroidModule) {
+            try {
+//                p.pluginManager.apply("kotlin-android")
+
+                println("isAndroidModule isAndroidModule --------   $isAndroidModule")
+
+//                p.dependencies.add("sdf","sadf")
+
+            } catch (Throwable e) {
+                e.printStackTrace()
+            }
+            println("pluginManager pluginManager pluginManager pluginManager")
+        }
+    }
+
+
+//        println("configurations configurations configurations")
+//        api plugin: 'kotlin-android'
+//        PluginManager pm=((PluginAware)p).getPluginManager()
+////        pm.apply ("asmlocal")
+//    }
+//            {
+//        println("p.afterProject  $p")
+//        println("p.afterProject   ${p.pluginManager.findPlugin("kotlin-kapt")}")
+//        PluginManager pm=((PluginAware)p).getPluginManager()
+//        pm.apply  plugin: "kotlin-android"
+//
+//        println("p.afterProject pluginManager   ${p.pluginManager.findPlugin("kotlin-android")}")
+//
+//    }
+
+
+}
+
+
+//public Project createChildProject(String name, Project parent, File projectDir) {
+//    ProjectInternal parentProject = (ProjectInternal) parent;
+//    DefaultProject project = CLASS_GENERATOR.newInstance(DefaultProject.class, name, parentProject, (projectDir != null) ? projectDir.getAbsoluteFile() : new File(parentProject.getProjectDir(), name), new StringScriptSource("test build file", null), parentProject.getGradle(), parentProject.getGradle().getServiceRegistryFactory(), parentProject.getClassLoaderScope().createChild("project-" + name), parentProject.getBaseClassLoaderScope());
+//    parentProject.addChildProject(project);
+//    parentProject.getProjectRegistry().addProject(project);
+//    return project;
+//}
