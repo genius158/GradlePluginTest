@@ -1,15 +1,15 @@
 project.afterEvaluate {
+    def map = new HashMap<String, String>()
     allprojects.any { p ->
         p.afterEvaluate {
             if (p.pluginManager.hasPlugin("com.android.application")) {
-                checkDuplicateTask(p)
+                checkDuplicateTask(map, p)
             }
         }
     }
 }
 
-void checkDuplicateTask(Project p) {
-    def map = new HashMap<String, String>()
+void checkDuplicateTask(HashMap<String, String> map, Project p) {
     p.tasks.all { Task tsk ->
         if (tsk.name.toLowerCase().matches("merge.*resources")) {
             tsk.doFirst {
@@ -35,9 +35,19 @@ void checkDuplicate(HashMap<String, String> map, File file) {
     } else {
         def key = file.getText().md5()
         if (map.containsKey(key)) {
-            println("CheckDuplicateRes    ${map.get(key)}   $file.absolutePath")
+            def baseFilePath = map.get(key)
+            if (baseFilePath.contains(file.absolutePath)) return
+
+            if (file.absolutePath.endsWith(".xml")) return
+
+            def value = "${map[key] ?: ""}, ${file.absolutePath}"
+            map[key] = value
+
+            println("CheckDuplicateRes   ${file.name}   $value")
         } else {
             map[key] = file.absolutePath
         }
     }
 }
+
+

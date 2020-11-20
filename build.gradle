@@ -122,14 +122,21 @@ project.gradle.taskGraph.whenReady { graph ->
     graph.allTasks.each { Task task ->
         println "afterEvaluate $task    ${task.name}"
 
-
-        task.getOutputs().any { output ->
-            output.files.any { f ->
-                def path = f.absolutePath
-                println "${task.name} ${task.getClass().getName()}  path path path path path     $path"
-
+        task.doFirst {
+            task.getOutputs().any { output ->
+                output.files.any { f ->
+                    def path = f.absolutePath
+                    println "${task.name} ${task.getClass().getName()}||path-path-path-path-path  output   $path"
+                }
             }
         }
+
+//            task.getInputs().any { output ->
+//                output.files.any { f ->
+//                    def path = f.absolutePath
+//                    println "${task.name} ${task.getClass().getName()}  path path path path path  intput   $path"
+//                }
+//            }
 
         if (task.name == "assembleDebug") {
             println "afterEvaluate ------------------------ $task"
@@ -319,7 +326,7 @@ getSubprojects().each { p ->
             p.android.applicationVariants.all { BaseVariant variant ->
                 //androidx.cardview:cardview:1.0.0
                 def task = ((CheckManifest) variant.getCheckManifestProvider().get())
-                task.getOutputs().any {input->
+                task.getOutputs().any { input ->
                     println("manifest manifest ${input.files.files}")
 
                 }
@@ -328,16 +335,16 @@ getSubprojects().each { p ->
 
                 if (task.isManifestRequiredButNotPresent()) {
 
-                }else{
+                } else {
 
 
 //                    println("manifest manifest ${manifest.absolutePath}")
 
                 }
-                    variant.getCheckManifestProvider().get().getOutputs().any { input ->
+                variant.getCheckManifestProvider().get().getOutputs().any { input ->
 
-                        println("variant.getCheckManifestProvider().get().getPath() ${input.files.getFiles()}")
-                    }
+                    println("variant.getCheckManifestProvider().get().getPath() ${input.files.getFiles()}")
+                }
 
                 println("variant.getCheckManifestProvider().get().getPath() ${}")
             }
@@ -395,6 +402,6 @@ getSubprojects().each { p ->
 //}
 
 afterEvaluate {
-    apply from :"./permission.gradle"
-    apply from :"./CheckDuplicateRes.gradle"
+    apply from: "./permission.gradle"
+    apply from: "./CheckDuplicateRes.gradle"
 }
