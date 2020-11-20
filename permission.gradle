@@ -1,11 +1,12 @@
-println "configuring $project.rootProject"
-
-
 import java.util.regex.Pattern
 
 project.afterEvaluate {
     allprojects.any { p ->
-        p.afterEvaluate { doInPermissionTask(p) }
+        p.afterEvaluate {
+            if (p.pluginManager.hasPlugin("com.android.application")) {
+                doInPermissionTask(p)
+            }
+        }
     }
 }
 
@@ -28,14 +29,19 @@ void writer2Json(File manifest) {
         def patten = Pattern.compile("<uses-permission.+/>")
         def strs = manifest.getText()
         def matcher = patten.matcher(strs)
+
+        def printFilePath = false
         while (matcher != null) {
             if (matcher.find()) {
                 def pattenInner = Pattern.compile("\".*\"")
                 def matcherInner = pattenInner.matcher(matcher.group())
                 matcherInner.find()
                 def permission = matcherInner.group().replace("\"", "")
-
-                println("permissionpermissionwriter2Json   ${permission}    ${manifest.absolutePath}")
+                if (!printFilePath) {
+                    printFilePath = true
+                    println("permissionpermissionwriter2Json   ${manifest.absolutePath}")
+                }
+                println("permissionpermissionwriter2Json   ${permission} ")
             } else {
                 return
             }
