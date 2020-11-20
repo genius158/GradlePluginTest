@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/asmlocal/asmlocal.iml" filepath="$PROJECT_DIR$/.idea/modules/asmlocal/asmlocal.iml" group="GradlePluginTest/asmlocal" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/asmlocalcode/asmlocalcode.iml" filepath="$PROJECT_DIR$/.idea/modules/asmlocalcode/asmlocalcode.iml" group="GradlePluginTest/asmlocalcode" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/asmprivacy/asmprivacy.iml" filepath="$PROJECT_DIR$/.idea/modules/asmprivacy/asmprivacy.iml" group="GradlePluginTest/asmprivacy" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/test/test.iml" filepath="$PROJECT_DIR$/.idea/modules/test/test.iml" group="GradlePluginTest/test" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/testPlugin/testPlugin.iml" filepath="$PROJECT_DIR$/.idea/modules/testPlugin/testPlugin.iml" group="GradlePluginTest/testPlugin" />
     </modules>
   </component>

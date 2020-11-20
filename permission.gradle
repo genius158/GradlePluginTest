@@ -1,0 +1,45 @@
+println "configuring $project.rootProject"
+
+
+import java.util.regex.Pattern
+
+project.afterEvaluate {
+    allprojects.any { p ->
+        p.afterEvaluate { doInPermissionTask(p) }
+    }
+}
+
+void doInPermissionTask(Project p) {
+    p.tasks.all { Task task ->
+        if (task.name.toLowerCase().matches("process.*manifest")) {
+            task.doFirst {
+                task.getInputs().any { output ->
+                    output.files.any { f ->
+                        writer2Json(f)
+                    }
+                }
+            }
+        }
+    }
+}
+
+void writer2Json(File manifest) {
+    if (manifest.name.toLowerCase().endsWith(".xml")) {
+        def patten = Pattern.compile("<uses-permission.+/>")
+        def strs = manifest.getText()
+        def matcher = patten.matcher(strs)
+        while (matcher != null) {
+            if (matcher.find()) {
+                def pattenInner = Pattern.compile("\".*\"")
+                def matcherInner = pattenInner.matcher(matcher.group())
+                matcherInner.find()
+                def permission = matcherInner.group().replace("\"", "")
+
+                println("permissionpermissionwriter2Json   ${permission}    ${manifest.absolutePath}")
+            } else {
+                return
+            }
+        }
+
+    }
+}

@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/asmlocal" />
             <option value="$PROJECT_DIR$/asmlocalcode" />
             <option value="$PROJECT_DIR$/asmprivacy" />
+            <option value="$PROJECT_DIR$/test" />
             <option value="$PROJECT_DIR$/testPlugin" />
           </set>
         </option>

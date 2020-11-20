@@ -1,1 +1,8 @@
-<manifest package="com.yan.asmlocalcode"></manifest>
+<manifest package="com.yan.asmlocalcode"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+
+        <meta-data android:name="test" android:value="testsets"/>
+    </application>
+</manifest>

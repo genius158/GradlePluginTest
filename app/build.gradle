@@ -3,6 +3,9 @@ import com.android.build.gradle.internal.api.BaseVariantImpl
 println("configurations apply apply")
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'testPlugin'
+apply plugin: 'asmlocal'
 
 
 android {
@@ -80,6 +83,8 @@ dependencies {
   //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
   //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
   //    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
+  implementation project(path:":test")
 
 }
 repositories {
@@ -203,19 +208,8 @@ def variant = project.properties["android"]
 def manifestAdjust = {
   android.applicationVariants.each { tmpVariant ->
 
-//    task testDependsOn() {
-//      println("getDependsOn getDependsOn getDependsOn getDependsOn")
-//    }
-
-//    ((BaseVariantImpl)tmpVariant).getAssemble().dependsOn({
-//      println("getDependsOn getDependsOn getDependsOn getDependsOn")
-//
-//      apply plugin: 'kotlin-android-extensions'
-//    })
-
     def javaSoure=file(project.rootProject.projectDir.absolutePath+"/testjava")
     ((BaseVariantImpl)tmpVariant).addJavaSourceFoldersToModel(javaSoure)
-
 
 //    ((BaseVariantImpl)tmpVariant).addOutputs()
 
@@ -278,7 +272,6 @@ task testetsetset {
   }
 }
 
-println "afterEvaluate ------------------------      111111111"
 
 project.afterEvaluate {
   manifestAdjust()

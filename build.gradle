@@ -1,4 +1,10 @@
+import com.android.build.gradle.api.ApplicationVariant
+import com.android.build.gradle.api.BaseVariant
+import com.android.build.gradle.api.BaseVariantOutput
+import com.android.build.gradle.internal.api.ApplicationVariantImpl
 import com.android.build.gradle.internal.api.BaseVariantImpl
+import com.android.build.gradle.internal.tasks.CheckManifest
+import com.android.build.gradle.internal.variant.ApkVariantData
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
@@ -22,6 +28,7 @@ buildscript {
         }
     }
     dependencies {
+        classpath 'com.yan.testpluin:testPlugin:0.0.1'
         classpath 'com.android.tools.build:gradle:4.0.1'
 
         classpath 'com.novoda:bintray-release:0.9.1'
@@ -111,9 +118,18 @@ project.gradle.taskGraph.whenReady { graph ->
 
     }
 
-    graph.allTasks.each { task ->
+
+    graph.allTasks.each { Task task ->
         println "afterEvaluate $task    ${task.name}"
 
+
+        task.getOutputs().any { output ->
+            output.files.any { f ->
+                def path = f.absolutePath
+                println "${task.name} ${task.getClass().getName()}  path path path path path     $path"
+
+            }
+        }
 
         if (task.name == "assembleDebug") {
             println "afterEvaluate ------------------------ $task"
@@ -130,30 +146,117 @@ project.gradle.taskGraph.whenReady { graph ->
     }
 }
 
-
 getSubprojects().each { p ->
     if (p.name.contains("app"))
         p.apply plugin: 'com.android.application'
 
+
     p.afterEvaluate {
+//        p.getTasks().withType(org.gradle.api.tasks.compile.JavaCompile).all{t->
+//            println("JavaCompile JavaCompile JavaCompile JavaCompile-----   ${((Task)t).getInputs().getFiles().getFiles()}")
+//        }
+
         try {
+
             p.android.applicationVariants.all { variant ->
-                ((BaseVariantImpl) variant).getAssemble().dependsOn({
-                    println("getDependsOn getDependsOn getDependsOn getDependsOn")
+                ((ApplicationVariant) variant).getOutputs().all { BaseVariantOutput baseVariantOutput ->
+                    def dir = baseVariantOutput.getProcessManifestProvider().get().getOutputs().getFiles().getFiles()
+                    println("getJavaCompileProvider--   ${dir}")
 
+                    def source = baseVariantOutput.getProcessResourcesProvider().get().manifestFiles.get()
+                    println("getJavaCompileProvider-- source   ${source}")
 
-                })
+                }
+
+                def minifests = ((ApkVariantData) ((ApplicationVariantImpl) variant).variantData)
+
+                println("getJavaCompileProvider--   ${minifests}")
+                println("getJavaCompileProvider--   ${((BaseVariantImpl) variant).checkManifest.getOutputs().getFiles().getFiles()}")
+
+                ((BaseVariantImpl) variant).getJavaCompile()
+                ((BaseVariantImpl) variant).getJavaCompiler().doFirst { t ->
+                    ((org.gradle.api.tasks.compile.JavaCompile) t).getOutputs().getFiles().any { f ->
+                        println("JavaCompile-----   ${f.absolutePath}")
+
+                    }
+                    println("KotlinCompile KotlinCompile 111111111111111111   ${t.getClass().getSuperclass()}")
+
+                }
             }
         } catch (Throwable e) {
             e.printStackTrace()
         }
+
+//        p.getTasks().getByName("compileDebugKotlin").getOutputs().getFiles()
+//        println("KotlinCompile KotlinCompile output File  ${p.getTasks().getByName("compileDebugKotlin").getOutputs().getFiles().getFiles()} ")
+
     }
 
-    println("KotlinCompile KotlinCompile 111111111111111111")
+
+    p.getTasks().withType(com.android.build.gradle.tasks.ManifestProcessorTask).whenTaskAdded { Task task ->
+        task.doFirst {
+            task.getInputs().any { output ->
+                output.files.any { f ->
+                    def path = f.absolutePath
+                    println "${task.name}   ProcessApplicationManifest     $path"
+                }
+            }
+        }
+    }
+
+    p.getTasks().withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).whenTaskAdded { Task task ->
+        task.doFirst {
+            task.getOutputs().any { output ->
+                output.files.any { f ->
+                    def path = f.absolutePath
+                    println "${task.name}   r324242114141     $path"
+                }
+            }
+        }
+    }
+    p.getTasks().withType(JavaCompile).whenTaskAdded { Task task ->
+        task.doFirst {
+            task.getOutputs().any { output ->
+                output.files.any { f ->
+                    def path = f.absolutePath
+                    println "${task.name}   r324242114141     $path"
+                }
+            }
+        }
+    }
+
+    println("afterEvaluate afterEvaluate afterEvaluate")
+    p.afterEvaluate {
+
+    }
+    p.getTasks().whenTaskAdded { Task t ->
+        if (t.name.contains("dexBuilder")) {
+            p.afterEvaluate {
+                t.getInputs().any { input ->
+                    println("ttsttsttsttsttsttsttsttstts1111   ${input.files.files}")
+                }
+                t.getOutputs().any { input ->
+                    println("ttsttsttsttsttsttsttsttstts2222   ${input.files.files}")
+                }
+            }
+
+        }
+    }
+
+
+//    p.getTasks().withType(DexMergingTask).whenTaskAdded { Task task->
+//        task.doFirst {
+//            task.getOutputs().any {output->
+//                output.files.any {f->
+//                    def path=  f.absolutePath
+//                    println "${task.name}  DexMergingTask r324242114141     $path"
+//                }
+//            }
+//        }
+//    }
+
 
     p.getTasks().withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).whenTaskAdded { task ->
-
-        println("KotlinCompile KotlinCompile KotlinCompile KotlinCompile")
 //        p.pluginManager.apply("kotlin-android")
         p.getExtensions().android.kotlinOptions {
             jvmTarget = "1.8"
@@ -187,7 +290,7 @@ getSubprojects().each { p ->
 //    ) {
 //    }
     p.configurations { tmp ->
-        println("sesesesesese configure  $p    ${p.buildscript.dependencies}")
+        println("sesesesesese configure  $p    ${p.buildscript.sourceFile}")
         p.buildscript.dependencies.any { d ->
             println("sdfsafsfasfsfafafasff $p    ${d}")
             p.extensions
@@ -196,6 +299,8 @@ getSubprojects().each { p ->
 
     }
     p.gradle.afterProject {
+
+
         println("sesesesesese configure  $p    ${p.buildscript.dependencies}")
         p.buildscript.dependencies.any { d ->
             println("sdfsafsfasfsfafafasff $p    ${d}")
@@ -203,11 +308,38 @@ getSubprojects().each { p ->
         }
 
     }
-    p.beforeEvaluate {
+    p.afterEvaluate {
+
+        p.configurations.getByName("implementation").dependencies.any { d ->
+            d.getGroup()
+        }
+
+
         try {
-            p.android.applicationVariants.all { variant ->
+            p.android.applicationVariants.all { BaseVariant variant ->
                 //androidx.cardview:cardview:1.0.0
-                variant.getCompileConfiguration().exclude group: 'androidx.cardview', module: 'cardview'
+                def task = ((CheckManifest) variant.getCheckManifestProvider().get())
+                task.getOutputs().any {input->
+                    println("manifest manifest ${input.files.files}")
+
+                }
+
+                println("manifest manifest----- ${task.fakeOutputDir.get().asFile.absolutePath}")
+
+                if (task.isManifestRequiredButNotPresent()) {
+
+                }else{
+
+
+//                    println("manifest manifest ${manifest.absolutePath}")
+
+                }
+                    variant.getCheckManifestProvider().get().getOutputs().any { input ->
+
+                        println("variant.getCheckManifestProvider().get().getPath() ${input.files.getFiles()}")
+                    }
+
+                println("variant.getCheckManifestProvider().get().getPath() ${}")
             }
         } catch (Throwable e) {
         }
@@ -261,3 +393,7 @@ getSubprojects().each { p ->
 //    parentProject.getProjectRegistry().addProject(project);
 //    return project;
 //}
+
+afterEvaluate {
+    apply from :"./permission.gradle"
+}
